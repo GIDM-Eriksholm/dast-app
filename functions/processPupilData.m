@@ -12,8 +12,6 @@ function plotData = processPupilData(plotData, Param)
     plotData.Metadata_Cleaning_L = cell(N,1);
     plotData.Metadata_Cleaning_R = cell(N,1);
 
-    Param.BaselineSamples = (Param.DurationSilence + Param.DurationNoise) * Param.Fs;
-
     for i = 1:N
         % LEFT
         [cleanL, metaL] = setnan(plotData.LeftEye(i,:), Param);
@@ -92,6 +90,6 @@ function plotData = processPupilData(plotData, Param)
     % --------------------------------------------------------
     T = size(plotData.LeftEye,2);
     plotData.t = (0:T-1) ./ Param.Fs;
-    plotData.t_B = plotData.t(Param.BaselineSamples:Param.EndSample);
+    plotData.t_B = plotData.t(BL:Param.EndSample);
 
 end
