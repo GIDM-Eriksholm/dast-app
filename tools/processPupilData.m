@@ -12,8 +12,6 @@ function plotData = processPupilData(plotData, Param)
     plotData.Metadata_Cleaning_L = cell(N,1);
     plotData.Metadata_Cleaning_R = cell(N,1);
 
-    Param.BaselineSamples = (Param.DurationSilence + Param.DurationNoise) * Param.Fs;
-
     for i = 1:N
         % LEFT
         [cleanL, metaL] = setnan(plotData.LeftEye(i,:), Param);
@@ -70,28 +68,16 @@ function plotData = processPupilData(plotData, Param)
     %% -------------------------------------------------------
     % BASELINE REMOVAL
     % --------------------------------------------------------
-    BL = Param.BaselineSamples;
-
-    % Compute baseline for each trial
-    Param.Baseline_L = mean(plotData.Cleaned_Diameter_L(:,1:BL),2,'omitmissing');
-    Param.Baseline_R = mean(plotData.Cleaned_Diameter_R(:,1:BL),2,'omitmissing');
-
-    % Apply baseline subtraction
-    plotData.Cleaned_Diameter_L_B = plotData.Cleaned_Diameter_L - Param.Baseline_L;
-    plotData.Cleaned_Diameter_R_B = plotData.Cleaned_Diameter_R - Param.Baseline_R;
-
-    plotData.Repaired_Diameter_L_B = plotData.Repaired_Diameter_L - Param.Baseline_L;
-    plotData.Repaired_Diameter_R_B = plotData.Repaired_Diameter_R - Param.Baseline_R;
-
-    plotData.LP_Diameter_L_B = plotData.LP_Diameter_L - Param.Baseline_L;
-    plotData.LP_Diameter_R_B = plotData.LP_Diameter_R - Param.Baseline_R;
-
+    for i = 1:N
+        plotData.LP_Diameter_L_B(i,:) = plotData.LP_Diameter_L(i,:) - mean(plotData.LP_Diameter_L(i,Param.BaselineWindow(1):Param.BaselineWindow(2)));
+        plotData.LP_Diameter_R_B(i,:) = plotData.LP_Diameter_R(i,:) - mean(plotData.LP_Diameter_R(i,Param.BaselineWindow(1):Param.BaselineWindow(2)));;
+    end
 
     %% -------------------------------------------------------
     % TIME VECTORS
     % --------------------------------------------------------
     T = size(plotData.LeftEye,2);
-    plotData.t = (0:T-1) ./ Param.Fs;
-    plotData.t_B = plotData.t(Param.BaselineSamples:Param.);
+    plotData.t = (0:T-1) ./ Param.Fs - Param.DurationSilence - app.Param.DurationNoise;
+    plotData.t_B = plotData.t(BL:Param.EndSample);
 
 end
