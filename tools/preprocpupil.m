@@ -78,7 +78,7 @@ if sum(Metadata.Intact) > 1
         end
     end
 else
-    warning('No data left after removal of samples.')
+    %warning('No data left after removal of samples.')
 end
 
 end
